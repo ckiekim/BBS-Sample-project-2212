@@ -7,6 +7,7 @@
     <%@ include file="../common/heading.jsp" %>
     <style>
         th, td { text-align: center; }
+        .disabled-link { pointer-events: none; }
     </style>
 </head>
 
@@ -22,30 +23,51 @@
             	<h3><strong>사용자 목록</strong></h3>
             	<hr>
                 <div class="row">
-					<div class="col-1"></div>
-			        <div class="col-11">
-			            <table class="table table-condensed table-hover" style="margin-bottom: 80px;">
-			                <tr class="table-secondary d-flex">
-			                    <th class="col-1">번호</th>
-			                    <th class="col-2">uid</th>
-			                    <th class="col-2">이름</th>
-			                    <th class="col-4">이메일</th>
-			                    <th class="col-2">가입일</th>
-			                    <th class="col-1">액션</th>
-			                </tr>   
-			                <tr class="d-flex">
-		                        <td class="col-1">1</td>
-		                        <td class="col-2">koandjo</td>
-		                        <td class="col-2">고예림</td>
-		                        <td class="col-4">koandjo9116@gmail.com</td>
-		                        <td class="col-2">2022-10-27</td>
-		                        <td class="col-1">
-		                            <a href="/user/update/koandjo"><i class="fas fa-user-edit"></i></a>
-		                            <a href="/user/delete/koandjo"><i class="fas fa-user-minus"></i></a>
-		                        </td>
-                   			</tr> 
-                   		</table>            
-	                </div>
+		            <table class="table table-condensed table-hover" style="margin-bottom: 80px;">
+		                <tr class="table-secondary d-flex">
+		                    <th class="col-1">번호</th>
+		                    <th class="col-2">uid</th>
+		                    <th class="col-2">이름</th>
+		                    <th class="col-4">이메일</th>
+		                    <th class="col-2">가입일</th>
+		                    <th class="col-1">액션</th>
+		                </tr>   
+		                <!-- 반복되는 부분 -->
+		            <c:forEach var="user" items="${userList}" varStatus="loop">
+		                <tr class="d-flex">
+	                        <td class="col-1">${loop.count}</td>
+	                        <td class="col-2">${user.uid}</td>
+	                        <td class="col-2">${user.uname}</td>
+	                        <td class="col-4">${user.email}</td>
+	                        <td class="col-2">${user.regDate}</td>
+	                        <td class="col-1">
+	                        <%-- 본인만이 수정 권한이 있음 --%>
+				            <c:if test="${not (uid eq user.uid)}">
+				            	<a href="#" ><i class="fas fa-user-edit"></i></a>
+				            </c:if>
+				            <c:if test="${uid eq user.uid}">
+				            	<a href="/bbs/user/update?uid=${user.uid}"><i class="fas fa-user-edit"></i></a>
+				            </c:if>
+				            
+				            <%-- 관리자(admin) 만이 삭제 권한이 있음 --%>
+				            <c:if test="${not(uid eq 'admin')}">
+				            	<a href="#" ><i class="fas fa-user-minus"></i></a>
+				            </c:if>
+				            <c:if test="${uid eq 'admin'}">
+	                            <a href="/bbs/user/delete?user=${user.uid}"><i class="fas fa-user-minus"></i></a>
+				            </c:if>
+	                        </td>
+                 		</tr> 
+                 	</c:forEach>
+                 	</table>    
+                 	<ul class="pagination justify-content-center">
+	                    <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
+	                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+	                    <li class="page-item active"><a class="page-link" href="#">2</a></li>
+	                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+	                    <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+	                </ul>        
+                </div>
             </div>
             <!-- =================== main =================== -->
             

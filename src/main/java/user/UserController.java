@@ -27,6 +27,7 @@ public class UserController extends HttpServlet {
 		String action = uri[uri.length - 1];
 		UserDao dao = new UserDao();
 		HttpSession session = request.getSession();
+		session.setAttribute("menu", "user");
 		
 		response.setContentType("text/html; charset=utf-8");
 		String uid = null, pwd = null, pwd2 = null, uname = null, email = null;
