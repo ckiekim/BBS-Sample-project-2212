@@ -85,7 +85,7 @@ public class UserDao {
 	
 	public List<User> listUsers() {
 		Connection conn = getConnection();
-		String sql = "SELECT * FROM users ORDER BY regDate, uid;";
+		String sql = "SELECT * FROM users ORDER BY regDate DESC, uid;";
 		List<User> list = new ArrayList<>();
 		try {
 			Statement stmt = conn.createStatement();

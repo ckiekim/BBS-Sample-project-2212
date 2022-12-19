@@ -89,7 +89,7 @@ public class UserController extends HttpServlet {
 				if (pwd.equals(pwd2)) {
 					u = new User(uid, pwd, uname, email);
 					dao.registerUser(u);
-					response.sendRedirect("/bbs/user/list");
+					response.sendRedirect("/bbs/user/login");
 				} else {
 					request.setAttribute("msg", "패스워드 입력이 잘못되었습니다.");
 					request.setAttribute("url", "/bbs/user/register");
