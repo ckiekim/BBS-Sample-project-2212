@@ -43,7 +43,7 @@
 	                        <td class="col-1">
 	                        <%-- 본인만이 수정 권한이 있음 --%>
 				            <c:if test="${not (uid eq user.uid)}">
-				            	<a href="#" ><i class="fas fa-user-edit"></i></a>
+				            	<a href="#" class="disabled-link"><i class="fas fa-user-edit"></i></a>
 				            </c:if>
 				            <c:if test="${uid eq user.uid}">
 				            	<a href="/bbs/user/update?uid=${user.uid}"><i class="fas fa-user-edit"></i></a>
@@ -51,10 +51,10 @@
 				            
 				            <%-- 관리자(admin) 만이 삭제 권한이 있음 --%>
 				            <c:if test="${not(uid eq 'admin')}">
-				            	<a href="#" ><i class="fas fa-user-minus"></i></a>
+				            	<a href="#" class="disabled-link"><i class="fas fa-user-minus"></i></a>
 				            </c:if>
 				            <c:if test="${uid eq 'admin'}">
-	                            <a href="/bbs/user/delete?user=${user.uid}"><i class="fas fa-user-minus"></i></a>
+	                            <a href="/bbs/user/delete?uid=${user.uid}"><i class="fas fa-user-minus"></i></a>
 				            </c:if>
 	                        </td>
                  		</tr> 
