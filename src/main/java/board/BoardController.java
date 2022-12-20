@@ -32,8 +32,10 @@ public class BoardController extends HttpServlet {
 		String uid = (String) session.getAttribute("uid");
 		session.setAttribute("menu", "board");
 		
+		response.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8");
-		
+		String title = null, content = null, files = null;
+		Board board = null;
 		RequestDispatcher rd = null;
 		
 		switch(action) {
@@ -55,16 +57,25 @@ public class BoardController extends HttpServlet {
 			rd = request.getRequestDispatcher("/board/list.jsp");
 			rd.forward(request, response);
 			break;
+			
+		case "detail":
+			int bid = Integer.parseInt(request.getParameter("bid"));
+			board = dao.getBoardDetail(bid);
+			request.setAttribute("board", board);
+			rd = request.getRequestDispatcher("/board/detail.jsp");
+			rd.forward(request, response);
+			break;
+			
 		case "write":	
 			if (request.getMethod().equals("GET")) {
 				response.sendRedirect("/bbs/board/write.jsp");
 			} else {
-				String title = request.getParameter("title");
-				String content = request.getParameter("content");
-				String files = request.getParameter("files");
+				title = request.getParameter("title");
+				content = request.getParameter("content");
+				files = request.getParameter("files");
 				
-				Board b = new Board(uid, title, content, files);
-				dao.insert(b);
+				board = new Board(uid, title, content, files);
+				dao.insert(board);
 				response.sendRedirect("/bbs/board/list?page=1");
 			}
 			break;

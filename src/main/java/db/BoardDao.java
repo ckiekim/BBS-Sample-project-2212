@@ -100,4 +100,36 @@ public class BoardDao {
 			e.printStackTrace();
 		}
 	}
+
+	public Board getBoardDetail(int bid) {
+		Connection conn = getConnection();
+		String sql = "SELECT b.bid, b.uid, b.title, b.content, b.modTime, b.viewCount,"
+				+ "	b.replyCount, b.files, u.uname FROM board AS b"
+				+ "	JOIN users AS u"
+				+ "	ON b.uid=u.uid"
+				+ "	WHERE b.bid=?";
+		Board b = new Board();
+		try {
+			PreparedStatement pStmt = conn.prepareStatement(sql);
+			pStmt.setInt(1, bid);
+			
+			ResultSet rs = pStmt.executeQuery();
+			while (rs.next()) {
+				b.setBid(rs.getInt(1));
+				b.setUid(rs.getString(2));
+				b.setTitle(rs.getString(3));
+				b.setContent(rs.getString(4));
+				// 2022-12-20 14:09:54 ==> 2022-12-20T14:09:54
+				b.setModTime(LocalDateTime.parse(rs.getString(5).replace(" ","T")));
+				b.setViewCount(rs.getInt(6));
+				b.setReplyCount(rs.getInt(7));
+				b.setFiles(rs.getString(8));
+				b.setUname(rs.getString(9));
+			}
+			rs.close(); pStmt.close(); conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return b;
+	}
 }
