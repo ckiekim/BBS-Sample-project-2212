@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -63,5 +64,40 @@ public class BoardDao {
 			e.printStackTrace();
 		}
 		return list;
+	}
+
+	public int getBoardCount() {
+		Connection conn = getConnection();
+		String sql = "SELECT COUNT(title) FROM board WHERE isDeleted=0;";
+		int count = 0;
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				count = rs.getInt(1);
+			}
+			rs.close(); stmt.close(); conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return count;
+	}
+
+	public void insert(Board b) {
+		Connection conn = getConnection();
+		String sql = "INSERT INTO board(uid, title, content, files) VALUES (?, ?, ?, ?);";
+		try {
+			PreparedStatement pStmt = conn.prepareStatement(sql);
+			pStmt.setString(1, b.getUid());
+			pStmt.setString(2, b.getTitle());
+			pStmt.setString(3, b.getContent());
+			pStmt.setString(4, b.getFiles());
+			
+			pStmt.executeUpdate();
+			pStmt.close();
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

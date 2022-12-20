@@ -1,6 +1,8 @@
 package board;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -27,6 +29,7 @@ public class BoardController extends HttpServlet {
 		BoardDao dao = new BoardDao();
 		//ReplyDao rdao = new ReplyDao();
 		HttpSession session = request.getSession();
+		String uid = (String) session.getAttribute("uid");
 		session.setAttribute("menu", "board");
 		
 		response.setContentType("text/html; charset=utf-8");
@@ -38,9 +41,32 @@ public class BoardController extends HttpServlet {
 			int page = Integer.parseInt(request.getParameter("page"));
 			List<Board> list = dao.listUsers("title", "", page);
 			
+			session.setAttribute("currentBoardPage", page);
+			int totalBoardNo = dao.getBoardCount();
+			int totalPages = (int) Math.ceil(totalBoardNo / 10.);
+			List<String> pageList = new ArrayList<>();
+			for (int i = 1; i <= totalPages; i++)
+				pageList.add(String.valueOf(i));
+			request.setAttribute("pageList", pageList);
+			
+			String today = LocalDate.now().toString();		// 2022-12-20
+			request.setAttribute("today", today);
 			request.setAttribute("boardList", list);
 			rd = request.getRequestDispatcher("/board/list.jsp");
 			rd.forward(request, response);
+			break;
+		case "write":	
+			if (request.getMethod().equals("GET")) {
+				response.sendRedirect("/bbs/board/write.jsp");
+			} else {
+				String title = request.getParameter("title");
+				String content = request.getParameter("content");
+				String files = request.getParameter("files");
+				
+				Board b = new Board(uid, title, content, files);
+				dao.insert(b);
+				response.sendRedirect("/bbs/board/list?page=1");
+			}
 			break;
 			
 			
