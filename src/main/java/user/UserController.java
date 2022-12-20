@@ -82,11 +82,11 @@ public class UserController extends HttpServlet {
 			if (request.getMethod().equals("GET")) {
 				response.sendRedirect("/bbs/user/register.jsp");
 			} else {
-				uid = request.getParameter("uid");
-				pwd = request.getParameter("pwd");
-				pwd2 = request.getParameter("pwd2");
-				uname = request.getParameter("uname");
-				email = request.getParameter("email");
+				uid = request.getParameter("uid").strip();
+				pwd = request.getParameter("pwd").strip();
+				pwd2 = request.getParameter("pwd2").strip();
+				uname = request.getParameter("uname").strip();
+				email = request.getParameter("email").strip();
 				if (pwd.equals(pwd2)) {
 					u = new User(uid, pwd, uname, email);
 					dao.registerUser(u);
@@ -108,12 +108,27 @@ public class UserController extends HttpServlet {
 				rd.forward(request, response);
 			} else {								// POST
 				uid = request.getParameter("uid");
-				uname = request.getParameter("uname");
-				email = request.getParameter("email");
-				u = new User(uid, uname, email);
-				dao.updateUser(u);
-				session.setAttribute("uname", uname);
-				response.sendRedirect("/bbs/user/list");
+				pwd = request.getParameter("pwd").strip();
+				pwd2 = request.getParameter("pwd2").strip();
+				uname = request.getParameter("uname").strip();
+				email = request.getParameter("email").strip();
+				
+				if (pwd == null || pwd.equals("")) {	// 패스워드를 입력하지 않은 경우
+					u = new User(uid, uname, email);
+					dao.updateUser(u);
+					session.setAttribute("uname", uname);
+					response.sendRedirect("/bbs/user/list");			
+				} else if (pwd.equals(pwd2)) {			// 패스워드가 올바른 경우
+					u = new User(uid, pwd, uname, email);
+					dao.updateUserWithPassword(u);
+					session.setAttribute("uname", uname);
+					response.sendRedirect("/bbs/user/list");
+				} else {								// 패스워드를 잘못 입력한 경우
+					request.setAttribute("msg", "패스워드 입력이 잘못되었습니다.");
+					request.setAttribute("url", "/bbs/user/update?uid=" + uid);
+					rd = request.getRequestDispatcher("/user/alertMsg.jsp");
+					rd.forward(request, response);
+				}
 			}
 			break;
 		case "delete":
