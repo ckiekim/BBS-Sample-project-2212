@@ -11,7 +11,7 @@
     </style>
 </head>
 
-<body>
+<body style="height: 2000px">
     <%@ include file="../common/top.jsp" %>
 
     <div class="container" style="margin-top: 80px;">
