@@ -64,8 +64,9 @@ public class BoardController extends HttpServlet {
 		case "detail":
 			bid = Integer.parseInt(request.getParameter("bid"));
 			uid = request.getParameter("uid");
-			// 조회수 증가, 단 본인이 읽은 것은 제외
-			if (! uid.equals(sessionUid)) {
+			String option = request.getParameter("option");
+			// 조회수 증가. 단, 본인이 읽거나 댓글 작성후에는 제외. 
+			if (option == null && (!uid.equals(sessionUid))) {
 				dao.increaseViewCount(bid);
 			}
 			board = dao.getBoardDetail(bid);
@@ -100,7 +101,7 @@ public class BoardController extends HttpServlet {
 			Reply reply = new Reply(content, isMine, sessionUid, bid);
 			replyDao.insert(reply);
 			dao.increaseReplyCount(bid);
-			response.sendRedirect("/bbs/board/detail?bid=" + bid + "&uid=" + uid);
+			response.sendRedirect("/bbs/board/detail?bid=" + bid + "&uid=" + uid + "&option=DNI");
 			break;
 			
 		case "delete":
