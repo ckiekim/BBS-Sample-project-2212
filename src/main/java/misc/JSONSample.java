@@ -25,7 +25,9 @@ public class JSONSample {
 		JSONParser parser = new JSONParser();
 		JSONObject persons = (JSONObject) parser.parse(obj.toString());
 		JSONArray person_arr = (JSONArray) persons.get("사람들");	// [{ }, { }, { }]
+		System.out.println(person_arr.toString());
 		JSONObject person = (JSONObject) person_arr.get(0);			// {"이름":"인간_1","주소":"서울 중앙로 1길","나이":21}
+		System.out.println(person.toString());
 		String name = (String) person.get("이름");
 		System.out.println(name);
 		person = (JSONObject) person_arr.get(1);
