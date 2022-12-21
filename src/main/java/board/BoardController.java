@@ -29,12 +29,13 @@ public class BoardController extends HttpServlet {
 		BoardDao dao = new BoardDao();
 		//ReplyDao rdao = new ReplyDao();
 		HttpSession session = request.getSession();
-		String uid = (String) session.getAttribute("uid");
+		String sessionUid = (String) session.getAttribute("uid");
 		session.setAttribute("menu", "board");
 		
 		response.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8");
-		String title = null, content = null, files = null;
+		String title = null, content = null, files = null, uid = null;
+		int bid = 0;
 		Board board = null;
 		RequestDispatcher rd = null;
 		
@@ -59,7 +60,12 @@ public class BoardController extends HttpServlet {
 			break;
 			
 		case "detail":
-			int bid = Integer.parseInt(request.getParameter("bid"));
+			bid = Integer.parseInt(request.getParameter("bid"));
+			uid = request.getParameter("uid");
+			// 조회수 증가, 단 본인이 읽은 것은 제외
+			if (! uid.equals(sessionUid)) {
+				dao.increaseViewCount(bid);
+			}
 			board = dao.getBoardDetail(bid);
 			request.setAttribute("board", board);
 			rd = request.getRequestDispatcher("/board/detail.jsp");
@@ -74,7 +80,7 @@ public class BoardController extends HttpServlet {
 				content = request.getParameter("content");
 				files = request.getParameter("files");
 				
-				board = new Board(uid, title, content, files);
+				board = new Board(sessionUid, title, content, files);
 				dao.insert(board);
 				response.sendRedirect("/bbs/board/list?page=1");
 			}
