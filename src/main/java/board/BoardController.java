@@ -99,7 +99,19 @@ public class BoardController extends HttpServlet {
 			int isMine = (uid.equals(sessionUid)) ? 1 : 0;		
 			Reply reply = new Reply(content, isMine, sessionUid, bid);
 			replyDao.insert(reply);
+			dao.increaseReplyCount(bid);
 			response.sendRedirect("/bbs/board/detail?bid=" + bid + "&uid=" + uid);
+			break;
+			
+		case "delete":
+			bid = Integer.parseInt(request.getParameter("bid"));
+			response.sendRedirect("/bbs/board/delete.jsp?bid=" + bid);
+			break;
+			
+		case "deleteConfirm":
+			bid = Integer.parseInt(request.getParameter("bid"));
+			dao.deleteBoard(bid);
+			response.sendRedirect("/bbs/board/list?page=" + session.getAttribute("currentBoardPage"));
 			break;
 			
 		default:
