@@ -20,7 +20,8 @@ import db.ReplyDao;
  * Servlet implementation class BoardController
  */
 @WebServlet({ "/board/list", "/board/search", "/board/write", "/board/update",
-			  "/board/detail", "/board/delete", "/board/deleteConfirm" })
+			  "/board/detail", "/board/delete", "/board/deleteConfirm",
+			  "/board/reply" })
 public class BoardController extends HttpServlet {
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -90,7 +91,16 @@ public class BoardController extends HttpServlet {
 			}
 			break;
 			
-			
+		case "reply":
+			content = request.getParameter("content");
+			bid = Integer.parseInt(request.getParameter("bid"));
+			uid = request.getParameter("uid");					// 게시글의 uid
+			// 게시글의 uid와 댓글을 쓰려고 하는 사람의 uid가 같으면 isMine이 1
+			int isMine = (uid.equals(sessionUid)) ? 1 : 0;		
+			Reply reply = new Reply(content, isMine, sessionUid, bid);
+			replyDao.insert(reply);
+			response.sendRedirect("/bbs/board/detail?bid=" + bid + "&uid=" + uid);
+			break;
 			
 		default:
 			System.out.println(request.getMethod() + " 잘못된 경로");

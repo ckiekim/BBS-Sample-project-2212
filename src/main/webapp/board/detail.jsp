@@ -85,8 +85,8 @@
                     </c:forEach>
                             
                         <form class="form-inline" action="/bbs/board/reply" method="post">
-                            <input type="hidden" name="bid" value="">     <!-- bid -->
-                            <input type="hidden" name="uid" value="">     <!-- uid -->
+                            <input type="hidden" name="bid" value="${board.bid}">     <!-- bid -->
+                            <input type="hidden" name="uid" value="${board.uid}">     <!-- uid -->
                             <table class="table table-borderless mt-2">
                                 <tr class="d-flex">
                                     <td class="col-1 text-end">
