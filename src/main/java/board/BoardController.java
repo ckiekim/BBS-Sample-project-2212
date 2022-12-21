@@ -44,7 +44,7 @@ public class BoardController extends HttpServlet {
 		switch(action) {
 		case "list":
 			int page = Integer.parseInt(request.getParameter("page"));
-			List<Board> list = dao.listUsers("title", "", page);
+			List<Board> list = dao.listBoard("title", "", page);
 			
 			session.setAttribute("currentBoardPage", page);
 			int totalBoardNo = dao.getBoardCount();
@@ -87,7 +87,7 @@ public class BoardController extends HttpServlet {
 				files = request.getParameter("files");
 				
 				board = new Board(sessionUid, title, content, files);
-				dao.insert(board);
+				dao.insertBoard(board);
 				response.sendRedirect("/bbs/board/list?page=1");
 			}
 			break;
@@ -113,6 +113,26 @@ public class BoardController extends HttpServlet {
 			bid = Integer.parseInt(request.getParameter("bid"));
 			dao.deleteBoard(bid);
 			response.sendRedirect("/bbs/board/list?page=" + session.getAttribute("currentBoardPage"));
+			break;
+			
+		case "update":
+			if (request.getMethod().equals("GET")) {
+				bid = Integer.parseInt(request.getParameter("bid"));
+				board = dao.getBoardDetail(bid);
+				request.setAttribute("board", board);
+				rd = request.getRequestDispatcher("/board/update.jsp");
+				rd.forward(request, response);
+			} else {
+				bid = Integer.parseInt(request.getParameter("bid"));
+				uid = request.getParameter("uid");
+				title = request.getParameter("title");
+				content = request.getParameter("content");
+				files = request.getParameter("files");
+				
+				board = new Board(bid, title, content, files);
+				dao.updateBoard(board);
+				response.sendRedirect("/bbs/board/detail?bid=" + bid + "&uid=" + uid + "&option=DNI");
+			}
 			break;
 			
 		default:
