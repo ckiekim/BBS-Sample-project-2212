@@ -37,15 +37,15 @@
 					    	<table class="table table-borderless">
 					    		<tr>
 					    			<td>param:</td>
-					    			<td><input type="text" name="param"></td>
+					    			<td colspan="2"><input class="form-control" type="text" name="param"></td>
 					    		</tr>
 					    		<tr>
 					    			<td>파일:</td>
-					    			<td><input type="file" name="file">
-					    				<button id="btn" class="btn btn-primary ms-5">추가</button></td>
+					    			<td><input class="form-control" type="file" name="file1" id="file1"></td>
+			                        <td><input class="form-control" type="file" name="file2" id="file2"></td>
 					    		</tr>
 					    		<tr>
-					    			<td colspan="2"><input type="submit" value="Upload"></td>
+					    			<td colspan="3"><input type="submit" value="Upload"></td>
 					    		</tr>
 					    	</table>
 					        <div id="additionalFile"></div>
