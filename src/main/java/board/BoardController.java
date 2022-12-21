@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import db.BoardDao;
+import db.ReplyDao;
 
 /**
  * Servlet implementation class BoardController
@@ -27,7 +28,7 @@ public class BoardController extends HttpServlet {
 		String[] uri = request.getRequestURI().split("/");
 		String action = uri[uri.length - 1];
 		BoardDao dao = new BoardDao();
-		//ReplyDao rdao = new ReplyDao();
+		ReplyDao replyDao = new ReplyDao();
 		HttpSession session = request.getSession();
 		String sessionUid = (String) session.getAttribute("uid");
 		session.setAttribute("menu", "board");
@@ -68,6 +69,9 @@ public class BoardController extends HttpServlet {
 			}
 			board = dao.getBoardDetail(bid);
 			request.setAttribute("board", board);
+			List<Reply> replyList = replyDao.getReplies(bid);
+			request.setAttribute("replyList", replyList);
+			
 			rd = request.getRequestDispatcher("/board/detail.jsp");
 			rd.forward(request, response);
 			break;

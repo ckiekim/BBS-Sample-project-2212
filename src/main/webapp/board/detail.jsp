@@ -61,23 +61,28 @@
 
                     <div class="col-12"><hr></div>
                     <div class="col-12">
+                    <c:forEach var="reply" items="${replyList}">
+                    <c:if test="${reply.isMine eq 0}">
                         <div class="d-flex flex-row mt-1">
                             <div class="card bg-light text-dark w-75">
                                 <div class="card-body">
-                                    마리아&nbsp;&nbsp;2022-05-17 14:30:28<br>    <!-- uname, regTime-->
-                                    저도 궁금합니다.😆  <!-- content -->
+                                    ${reply.uname}&nbsp;&nbsp;${fn:replace(reply.regDate, 'T', ' ')}<br>  
+                                    ${fn:replace(reply.content, newline, '<br>')}  <!-- content -->
                                 </div>
                             </div>
                         </div>
-                        
+                    </c:if>
+                    <c:if test="${reply.isMine eq 1}">
                         <div class="d-flex flex-row-reverse mt-1">
                             <div class="card w-75">
                                 <div class="card-body text-end">
-                                    김은숙&nbsp;&nbsp;2022-05-17 14:30:28<br>    <!-- uname, regTime-->
-                                    email로 문의해 주시면 친절하게 안내해 드릴게요.😄👍😆
+                                    ${reply.uname}&nbsp;&nbsp;${fn:replace(reply.regDate, 'T', ' ')}<br>  
+                                    ${fn:replace(reply.content, newline, '<br>')}  <!-- content -->
                                 </div>
                             </div>
                         </div>
+                    </c:if>
+                    </c:forEach>
                             
                         <form class="form-inline" action="/bbs/board/reply" method="post">
                             <input type="hidden" name="bid" value="">     <!-- bid -->
