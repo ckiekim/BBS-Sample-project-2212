@@ -48,7 +48,7 @@ public class FileUpload extends HttpServlet {
 					File uploadFile = new File(tmpPath + File.separator + fileName);
 					i.write(uploadFile); 	// 임시 파일을 파일로 씀
 					// System.out.println(fileName);
-					fileList.add(tmpPath + File.separator + fileName);
+					fileList.add(fileName);
 				}
 				// 다른 타입 request일 때
 				else if (i.isFormField()) {

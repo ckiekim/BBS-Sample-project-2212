@@ -18,6 +18,7 @@ import javax.servlet.http.Part;
 
 import db.BoardDao;
 import db.ReplyDao;
+import misc.JSONUtil;
 
 /**
  * Servlet implementation class BoardController
@@ -90,6 +91,12 @@ public class BoardController extends HttpServlet {
 				dao.increaseViewCount(bid);
 			}
 			board = dao.getBoardDetail(bid);
+			String jsonFiles = board.getFiles();
+			if (!(jsonFiles == null || jsonFiles.equals(""))) {
+				JSONUtil json = new JSONUtil();
+				List<String> fileList = json.parse(jsonFiles);
+				request.setAttribute("fileList", fileList);
+			}
 			request.setAttribute("board", board);
 			List<Reply> replyList = replyDao.getReplies(bid);
 			request.setAttribute("replyList", replyList);
