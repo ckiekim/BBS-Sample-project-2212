@@ -21,7 +21,7 @@
             <!-- =================== main =================== -->
             <div class="col-sm-9">
                 <table class="table table-sm table-borderless">
-                    <form action="" method="post">
+                    <form action="/bbs/board/search" method="post">
                         <tr class="d-flex">
                             <td class="col-6" style="text-align: left;">
                                 <h3><strong>게시글 목록</strong>
@@ -31,14 +31,14 @@
                                 </h3>
                             </td>
                             <td class="col-2">
-                                <select class="form-select me-2">
-                                    <option value="1" selected>제목</option>
-                                    <option value="2">본문</option>
-                                    <option value="3">글쓴이</option>
+                                <select class="form-select me-2" name="field">
+                                    <option value="title" selected>제목</option>
+                                    <option value="content">본문</option>
+                                    <option value="uname">글쓴이</option>
                                 </select>
                             </td>
                             <td class="col-3">
-                                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                                <input class="form-control me-2" type="search" placeholder="검색 내용" name="query">
                             </td>
                             <td class="col-1">
                                 <button class="btn btn-outline-primary" type="submit">검색</button>
