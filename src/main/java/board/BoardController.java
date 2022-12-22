@@ -22,7 +22,7 @@ import db.ReplyDao;
 /**
  * Servlet implementation class BoardController
  */
-@WebServlet({ "/board/list", "/board/search", "/board/write", "/board/update", "/board/detail", "/board/delete",
+@WebServlet({ "/board/list", "/board/write", "/board/update", "/board/detail", "/board/delete",
 		"/board/deleteConfirm", "/board/reply" })
 /*
  * @MultipartConfig( fileSizeThreshold = 1024 * 1024 * 1, // 1 MB maxFileSize =
@@ -44,7 +44,7 @@ public class BoardController extends HttpServlet {
 		response.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8");
 		String title = null, content = null, files = null, uid = null, today = null;
-		int bid = 0, totalBoardNo = 0, totalPages = 0;
+		int bid = 0, totalBoardNo = 0, totalPages = 0, page = 0;
 		Board board = null;
 		List<Board> list = null;
 		List<String> pageList = null;
@@ -52,8 +52,14 @@ public class BoardController extends HttpServlet {
 
 		switch (action) {
 		case "list":
-			int page = Integer.parseInt(request.getParameter("page"));
-			list = dao.listBoard("title", "", page);
+			String page_ = request.getParameter("p");
+			String field = request.getParameter("f");
+			String query = request.getParameter("q");
+			
+			page = (page_ == null || page_.equals("")) ? 1 : Integer.parseInt(page_);
+			field = (field == null || field.equals("")) ? "title" : field;
+			query = (query == null || query.equals("")) ? "" : query;
+			list = dao.listBoard(field, query, page);
 
 			session.setAttribute("currentBoardPage", page);
 			totalBoardNo = dao.getBoardCount("bid", "");
@@ -69,27 +75,6 @@ public class BoardController extends HttpServlet {
 			request.setAttribute("endPage", endPage);
 			request.setAttribute("totalPages", totalPages);
 
-			today = LocalDate.now().toString(); // 2022-12-20
-			request.setAttribute("today", today);
-			request.setAttribute("boardList", list);
-			rd = request.getRequestDispatcher("/board/list.jsp");
-			rd.forward(request, response);
-			break;
-
-		case "search":		// 개선 포인트가 있음
-			String field = request.getParameter("field");
-			String query = request.getParameter("query");
-			list = dao.listBoard(field, query, 1);
-			
-			page = 1;
-			session.setAttribute("currentBoardPage", page);
-			totalBoardNo = dao.getBoardCount(field, query);
-			totalPages = (int) Math.ceil(totalBoardNo / 10.);
-			pageList = new ArrayList<>();
-			for (int i = 1; i <= totalPages; i++)
-				pageList.add(String.valueOf(i));
-			request.setAttribute("pageList", pageList);
-			
 			today = LocalDate.now().toString(); // 2022-12-20
 			request.setAttribute("today", today);
 			request.setAttribute("boardList", list);
@@ -137,7 +122,7 @@ public class BoardController extends HttpServlet {
 
 				 board = new Board(sessionUid, title, content, files); 
 				 dao.insertBoard(board);
-				response.sendRedirect("/bbs/board/list?page=1");
+				response.sendRedirect("/bbs/board/list?p=1&f=&q=");
 			}
 			break;
 
@@ -161,7 +146,7 @@ public class BoardController extends HttpServlet {
 		case "deleteConfirm":
 			bid = Integer.parseInt(request.getParameter("bid"));
 			dao.deleteBoard(bid);
-			response.sendRedirect("/bbs/board/list?page=" + session.getAttribute("currentBoardPage"));
+			response.sendRedirect("/bbs/board/list?p=" + session.getAttribute("currentBoardPage") + "&f=&q=");
 			break;
 
 		case "update":

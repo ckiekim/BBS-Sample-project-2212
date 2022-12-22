@@ -1,7 +1,10 @@
 package board;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,9 +63,13 @@ public class Upload extends HttpServlet {
                 continue;
             fileList.add(fileName);
             
-            for (Part part : request.getParts()) {
-                part.write(tmpPath + File.separator + fileName);
-            }
+//            ByteArrayInputStream bis = (ByteArrayInputStream) filePart.getInputStream();
+//            byte[] buffer = bis.readAllBytes();
+//            OutputStream fos = new FileOutputStream(tmpPath + File.separator + fileName);
+//            fos.write(buffer);
+			for (Part part : request.getParts()) { 
+				part.write(tmpPath + File.separator + fileName); 
+			}
             response.getWriter().print("The file is uploaded sucessfully.");	
         }
 	}
