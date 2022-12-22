@@ -24,10 +24,6 @@ import db.ReplyDao;
  */
 @WebServlet({ "/board/list", "/board/write", "/board/update", "/board/detail", "/board/delete",
 		"/board/deleteConfirm", "/board/reply" })
-/*
- * @MultipartConfig( fileSizeThreshold = 1024 * 1024 * 1, // 1 MB maxFileSize =
- * 1024 * 1024 * 10, // 10 MB maxRequestSize = 1024 * 1024 * 100 // 100 MB )
- */
 public class BoardController extends HttpServlet {
 
 	protected void service(HttpServletRequest request, HttpServletResponse response)
@@ -62,6 +58,9 @@ public class BoardController extends HttpServlet {
 			list = dao.listBoard(field, query, page);
 
 			session.setAttribute("currentBoardPage", page);
+			request.setAttribute("field", field);
+			request.setAttribute("query", query);
+			
 			totalBoardNo = dao.getBoardCount("bid", "");
 			totalPages = (int) Math.ceil(totalBoardNo / 10.);
 			
@@ -103,25 +102,14 @@ public class BoardController extends HttpServlet {
 			if (request.getMethod().equals("GET")) {
 				response.sendRedirect("/bbs/board/write.jsp");
 			} else {
-				title = request.getParameter("title");
-				content = request.getParameter("content");
-				System.out.println("title: " + title);
+				/**  /board/fileupload 로 부터 전달된 데이터를 읽음 */
+				title = (String) request.getAttribute("title");
+				content = (String) request.getAttribute("content");
+				files = (String) request.getAttribute("files");
+				// System.out.println("title="+title+", files="+files);
 
-				files = request.getParameter("files");
-				/*
-				 * String tmpPath = "c:/Temp/upload"; Part filePart = null; String fileName =
-				 * null; List<String> fileList = new ArrayList<>(); for (int i=1; i<=2; i++) {
-				 * filePart = request.getPart("file" + i); // name이 file1, file2 if (filePart ==
-				 * null) continue; fileName = filePart.getSubmittedFileName();
-				 * System.out.println("file" + i + ": " + fileName); if (fileName == null ||
-				 * fileName.equals("")) continue; fileList.add(fileName);
-				 * 
-				 * for (Part part : request.getParts()) { part.write(tmpPath + File.separator +
-				 * fileName); } }
-				 */
-
-				 board = new Board(sessionUid, title, content, files); 
-				 dao.insertBoard(board);
+				board = new Board(sessionUid, title, content, files); 
+				dao.insertBoard(board);
 				response.sendRedirect("/bbs/board/list?p=1&f=&q=");
 			}
 			break;

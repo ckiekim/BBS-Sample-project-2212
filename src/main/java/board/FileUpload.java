@@ -2,6 +2,7 @@ package board;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -15,9 +16,10 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
-@WebServlet("/board/multiupload")
-public class MultiUpload extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+import misc.JSONUtil;
+
+@WebServlet("/board/fileupload")
+public class FileUpload extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -27,8 +29,8 @@ public class MultiUpload extends HttpServlet {
 
 		/** 업로드된 파일을 저장할 저장소 */
 		DiskFileItemFactory factory = new DiskFileItemFactory();
-		factory.setRepository(new File(tmpPath)); // 저장할 위치를 File객체로 생성
-		factory.setSizeThreshold(1024 * 1024); // MaxMemorySize 1MB
+		factory.setRepository(new File(tmpPath)); 	// 저장할 위치를 File객체로 생성
+		factory.setSizeThreshold(1024 * 1024); 		// MaxMemorySize 1MB
 
 		/** 파일변환 -> 리스트에 담기 */
 		ServletFileUpload fu = new ServletFileUpload(factory);
@@ -37,22 +39,27 @@ public class MultiUpload extends HttpServlet {
 
 		try {
 			List<FileItem> items = fu.parseRequest(request);
+			List<String> fileList = new ArrayList<>();
 			/** 파일 저장 */
 			for (FileItem i : items) {
 				// 첨부 파일일 때
 				if (!i.isFormField() && i.getSize() > 0) {
 					String fileName = i.getName();
 					File uploadFile = new File(tmpPath + File.separator + fileName);
-					i.write(uploadFile); // 임시 파일을 파일로 씀
-					request.setAttribute("files", tmpPath + File.separator + fileName);
+					i.write(uploadFile); 	// 임시 파일을 파일로 씀
+					// System.out.println(fileName);
+					fileList.add(tmpPath + File.separator + fileName);
 				}
 				// 다른 타입 request일 때
 				else if (i.isFormField()) {
-					System.out.println(i.getContentType());
+					// System.out.println(i.getContentType());
 					request.setAttribute(i.getFieldName(), i.getString("UTF-8"));
-					System.out.println(i.getFieldName() + i.getString("UTF-8"));
+					// System.out.println(i.getFieldName() + i.getString("UTF-8"));
 				}
 			}
+			JSONUtil json = new JSONUtil();
+			String jsonList = json.stringify(fileList);
+			request.setAttribute("files", jsonList);
 			RequestDispatcher rd = request.getRequestDispatcher("/board/write");
 			rd.forward(request, response);
 		} catch (Exception e) {

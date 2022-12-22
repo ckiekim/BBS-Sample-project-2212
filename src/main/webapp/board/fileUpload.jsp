@@ -33,7 +33,7 @@
                 <div class="row">
 			        <div class="col-1"></div>
 			        <div class="col-10">
-					    <form action="/bbs/board/upload" method="post" enctype="multipart/form-data">
+					    <form action="/bbs/board/fileupload" method="post" enctype="multipart/form-data">
 					    	<table class="table table-borderless">
 					    		<tr>
 					    			<td>param:</td>
@@ -41,7 +41,7 @@
 					    		</tr>
 					    		<tr>
 					    			<td>파일:</td>
-					    			<td><input class="form-control" type="file" name="file1" id="file1"></td>
+					    			<td><input class="form-control" type="file" placeholder="첨부파일" name="files" multiple /></td>
 			                        <td><input class="form-control" type="file" name="file2" id="file2"></td>
 					    		</tr>
 					    		<tr>
