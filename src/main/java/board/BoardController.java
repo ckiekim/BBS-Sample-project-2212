@@ -56,12 +56,18 @@ public class BoardController extends HttpServlet {
 			list = dao.listBoard("title", "", page);
 
 			session.setAttribute("currentBoardPage", page);
-			totalBoardNo = dao.getBoardCount("title", "");
+			totalBoardNo = dao.getBoardCount("bid", "");
 			totalPages = (int) Math.ceil(totalBoardNo / 10.);
+			
+			int startPage = (int)(Math.ceil((page-0.5)/10) - 1) * 10 + 1;
+			int endPage = Math.min(totalPages, startPage + 9);
 			pageList = new ArrayList<>();
-			for (int i = 1; i <= totalPages; i++)
+			for (int i = startPage; i <= endPage; i++)
 				pageList.add(String.valueOf(i));
 			request.setAttribute("pageList", pageList);
+			request.setAttribute("startPage", startPage);
+			request.setAttribute("endPage", endPage);
+			request.setAttribute("totalPages", totalPages);
 
 			today = LocalDate.now().toString(); // 2022-12-20
 			request.setAttribute("today", today);
@@ -70,7 +76,7 @@ public class BoardController extends HttpServlet {
 			rd.forward(request, response);
 			break;
 
-		case "search":
+		case "search":		// 개선 포인트가 있음
 			String field = request.getParameter("field");
 			String query = request.getParameter("query");
 			list = dao.listBoard(field, query, 1);
