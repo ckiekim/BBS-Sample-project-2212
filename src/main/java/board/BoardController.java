@@ -1,5 +1,6 @@
 package board;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -7,11 +8,13 @@ import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 
 import db.BoardDao;
 import db.ReplyDao;
@@ -22,6 +25,11 @@ import db.ReplyDao;
 @WebServlet({ "/board/list", "/board/search", "/board/write", "/board/update",
 			  "/board/detail", "/board/delete", "/board/deleteConfirm",
 			  "/board/reply" })
+@MultipartConfig(
+	    fileSizeThreshold = 1024 * 1024 * 1, // 1 MB
+	    maxFileSize = 1024 * 1024 * 10,      // 10 MB
+	    maxRequestSize = 1024 * 1024 * 100   // 100 MB
+)
 public class BoardController extends HttpServlet {
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -84,10 +92,31 @@ public class BoardController extends HttpServlet {
 			} else {
 				title = request.getParameter("title");
 				content = request.getParameter("content");
-				files = request.getParameter("files");
+				System.out.println("title: " + title);
 				
-				board = new Board(sessionUid, title, content, files);
-				dao.insertBoard(board);
+				//files = request.getParameter("files");
+				String tmpPath = "c:/Temp/upload";
+				Part filePart = null;
+				String fileName = null;
+		        List<String> fileList = new ArrayList<>();
+		        for (int i=1; i<=2; i++) {
+		            filePart = request.getPart("file" + i);		// name이 file1, file2
+		            if (filePart == null)
+		            	continue;
+		            fileName = filePart.getSubmittedFileName();
+		            System.out.println("file" + i + ": " + fileName);
+		            if (fileName == null || fileName.equals(""))
+		                continue;
+		            fileList.add(fileName);
+		            
+		            for (Part part : request.getParts()) {
+		                part.write(tmpPath + File.separator + fileName);
+		            }
+		        }
+				
+				/*
+				 * board = new Board(sessionUid, title, content, files); dao.insertBoard(board);
+				 */
 				response.sendRedirect("/bbs/board/list?page=1");
 			}
 			break;
