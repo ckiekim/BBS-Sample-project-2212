@@ -25,7 +25,8 @@ public class FileUpload extends HttpServlet {
 			throws ServletException, IOException {
 		String tmpPath = "c:/Temp/upload";
 		request.setCharacterEncoding("utf-8");
-		response.setContentType("text/html;charset=utf-8");
+		String dest = request.getParameter("dest");
+		//System.out.println(dest);
 
 		/** 업로드된 파일을 저장할 저장소 */
 		DiskFileItemFactory factory = new DiskFileItemFactory();
@@ -40,6 +41,7 @@ public class FileUpload extends HttpServlet {
 		try {
 			List<FileItem> items = fu.parseRequest(request);
 			List<String> fileList = new ArrayList<>();
+			List<String> removeFiles = new ArrayList<>();
 			/** 파일 저장 */
 			for (FileItem i : items) {
 				// 첨부 파일일 때
@@ -53,14 +55,25 @@ public class FileUpload extends HttpServlet {
 				// 다른 타입 request일 때
 				else if (i.isFormField()) {
 					// System.out.println(i.getContentType());
-					request.setAttribute(i.getFieldName(), i.getString("UTF-8"));
+					if (i.getFieldName().equals("removeFiles"))
+						removeFiles.add(i.getString("UTF-8"));
+					else
+						request.setAttribute(i.getFieldName(), i.getString("UTF-8"));
 					// System.out.println(i.getFieldName() + i.getString("UTF-8"));
 				}
 			}
+			
+			if (removeFiles.size() > 0) {
+				String[] rmFiles = new String[removeFiles.size()];
+				for (int i=0; i<removeFiles.size(); i++)
+					rmFiles[i] = removeFiles.get(0);
+				request.setAttribute("removeFiles", rmFiles);
+			}
+			
 			JSONUtil json = new JSONUtil();
 			String jsonList = json.stringify(fileList);
 			request.setAttribute("files", jsonList);
-			RequestDispatcher rd = request.getRequestDispatcher("/board/write");
+			RequestDispatcher rd = request.getRequestDispatcher("/board/" + dest);
 			rd.forward(request, response);
 		} catch (Exception e) {
 			e.printStackTrace();
