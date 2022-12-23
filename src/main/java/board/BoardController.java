@@ -177,12 +177,19 @@ public class BoardController extends HttpServlet {
 				String[] removeFiles = (String[]) request.getAttribute("removeFiles");
 				// System.out.println(Arrays.toString(removeFiles));
 				
-				for (String rmFile: removeFiles) {
-					File delFile = new File("c:/Temp/upload/" + rmFile);
-					delFile.delete();
-					listAdditionalFiles.remove(rmFile);
+				if (removeFiles != null) {
+					for (String rmFile: removeFiles) {
+						File delFile = new File("c:/Temp/upload/" + rmFile);
+						delFile.delete();
+						listAdditionalFiles.remove(rmFile);
+					}
 				}
-				files = (new JSONUtil()).stringify(listAdditionalFiles);
+				JSONUtil json = new JSONUtil();
+				files = (String) request.getAttribute("files");
+				List<String> tmpList = json.parse(files);
+				for (String tmp: tmpList)
+					listAdditionalFiles.add(tmp);
+				files = json.stringify(listAdditionalFiles);
 				// System.out.println(files);
 				
 				board = new Board(bid, title, content, files);
