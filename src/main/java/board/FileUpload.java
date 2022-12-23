@@ -54,20 +54,8 @@ public class FileUpload extends HttpServlet {
 				}
 				// 다른 타입 request일 때
 				else if (i.isFormField()) {
-					// System.out.println(i.getContentType());
-					if (i.getFieldName().equals("removeFiles"))
-						removeFiles.add(i.getString("UTF-8"));
-					else
-						request.setAttribute(i.getFieldName(), i.getString("UTF-8"));
-					// System.out.println(i.getFieldName() + i.getString("UTF-8"));
+					request.setAttribute(i.getFieldName(), i.getString("UTF-8"));
 				}
-			}
-			
-			if (removeFiles.size() > 0) {
-				String[] rmFiles = new String[removeFiles.size()];
-				for (int i=0; i<removeFiles.size(); i++)
-					rmFiles[i] = removeFiles.get(0);
-				request.setAttribute("removeFiles", rmFiles);
 			}
 			
 			JSONUtil json = new JSONUtil();

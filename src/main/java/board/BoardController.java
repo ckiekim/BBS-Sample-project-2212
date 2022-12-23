@@ -154,7 +154,6 @@ public class BoardController extends HttpServlet {
 				board = dao.getBoardDetail(bid);
 				
 				jsonFiles = board.getFiles();
-				//System.out.println(jsonFiles);		// {"list":["1.svg","2.svg","3.svg","4.svg","5.svg"]}
 				if (!(jsonFiles == null || jsonFiles.equals(""))) {
 					JSONUtil json = new JSONUtil();
 					List<String> fileList = json.parse(jsonFiles);
@@ -174,23 +173,19 @@ public class BoardController extends HttpServlet {
 				
 				List<String> listAdditionalFiles = (List<String>) session.getAttribute("fileList");
 				
-				String[] removeFiles = (String[]) request.getAttribute("removeFiles");
-				// System.out.println(Arrays.toString(removeFiles));
+				String delName = (String) request.getAttribute("delFile");
 				
-				if (removeFiles != null) {
-					for (String rmFile: removeFiles) {
-						File delFile = new File("c:/Temp/upload/" + rmFile);
-						delFile.delete();
-						listAdditionalFiles.remove(rmFile);
-					}
+				if (!(delName == null || delName.equals(""))) {
+					File delFile = new File("c:/Temp/upload/" + delName);
+					delFile.delete();
+					listAdditionalFiles.remove(delName);
 				}
 				JSONUtil json = new JSONUtil();
-				files = (String) request.getAttribute("files");
+				files = (String) request.getAttribute("files");		// FileUpload에서 넘어온 것
 				List<String> tmpList = json.parse(files);
 				for (String tmp: tmpList)
 					listAdditionalFiles.add(tmp);
 				files = json.stringify(listAdditionalFiles);
-				// System.out.println(files);
 				
 				board = new Board(bid, title, content, files);
 				dao.updateBoard(board);

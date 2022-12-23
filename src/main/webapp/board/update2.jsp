@@ -42,7 +42,7 @@
 		                        <td class="col-1">삭제</td>
 		                        <td class="col-10" style="text-align: left">
 		                        <c:forEach var="file" items="${fileList}">
-		                        	<input class="ms-2" type="checkbox" name="removeFiles" value="${file}"> ${file}
+		                        	<input class="ms-2" type="radio" name="delFile" value="${file}"> ${file}
 		                        </c:forEach>
 		                        </td>
 		                    </tr>
