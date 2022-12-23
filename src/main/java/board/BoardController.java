@@ -31,7 +31,6 @@ public class BoardController extends HttpServlet {
 
 	protected void service(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		request.setCharacterEncoding("utf-8");
 		String[] uri = request.getRequestURI().split("/");
 		String action = uri[uri.length - 1];
 		BoardDao dao = new BoardDao();
@@ -81,7 +80,7 @@ public class BoardController extends HttpServlet {
 			today = LocalDate.now().toString(); // 2022-12-20
 			request.setAttribute("today", today);
 			request.setAttribute("boardList", list);
-			rd = request.getRequestDispatcher("/board/list.jsp");
+			rd = request.getRequestDispatcher("/WEB-INF/view/board/list.jsp");
 			rd.forward(request, response);
 			break;
 			
@@ -104,14 +103,15 @@ public class BoardController extends HttpServlet {
 			List<Reply> replyList = replyDao.getReplies(bid);
 			request.setAttribute("replyList", replyList);
 
-			rd = request.getRequestDispatcher("/board/detail.jsp");
+			rd = request.getRequestDispatcher("/WEB-INF/view/board/detail.jsp");
 			rd.forward(request, response);
 			break;
 
 		case "write":
 			if (request.getMethod().equals("GET")) {
-				response.sendRedirect("/bbs/board/write2.jsp");		// Editor version
-				// response.sendRedirect("/bbs/board/write.jsp");
+				rd = request.getRequestDispatcher("/WEB-INF/view/board/write2.jsp");	// Editor version
+				rd.forward(request, response);
+				// response.sendRedirect("/bbs/WEB-INF/view/board/write.jsp");
 			} else {
 				/**  /board/fileupload 로 부터 전달된 데이터를 읽음 */
 				title = (String) request.getAttribute("title");
@@ -139,7 +139,8 @@ public class BoardController extends HttpServlet {
 
 		case "delete":
 			bid = Integer.parseInt(request.getParameter("bid"));
-			response.sendRedirect("/bbs/board/delete.jsp?bid=" + bid);
+			rd = request.getRequestDispatcher("/WEB-INF/view/board/delete.jsp?bid=" + bid);
+			rd.forward(request, response);
 			break;
 
 		case "deleteConfirm":
@@ -161,8 +162,8 @@ public class BoardController extends HttpServlet {
 				}
 				
 				request.setAttribute("board", board);
-				rd = request.getRequestDispatcher("/board/update2.jsp");	// Editor version
-				// rd = request.getRequestDispatcher("/board/update.jsp");
+				rd = request.getRequestDispatcher("/WEB-INF/view/board/update2.jsp");	// Editor version
+				// rd = request.getRequestDispatcher("/WEB-INF/view/board/update.jsp");
 				rd.forward(request, response);
 			} else {
 				String bid_ = (String) request.getAttribute("bid");
